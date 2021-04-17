@@ -9,7 +9,7 @@ This repository is for the HACK-THAT group for the br41n.io hackathon in associa
 - [Esben Kran](https://github.com/esbenkc)
 - Aleksandrs Baskakovs
 - Luke Ring
-- Sebastian Scott Engen
+- [Sebastian Scott Engen](https://github.com/sebsebar)
 - Sigurd 
 
 ## Repository
