@@ -2,7 +2,9 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 
-def prepare_model():
+def model_prepare():
+  # try different values for shape parameter 1
+  # shape = (time, channels, ur mom)
   input_layer = keras.Input(shape = (351,8,1), name='main_input')
   x     = layers.Conv2D(16, 8, padding='same', activation='relu')(input_layer)
   x     = layers.Dropout(0.33)(x)
@@ -17,3 +19,10 @@ def prepare_model():
   model = keras.Model(inputs=input_layer, outputs=output)
 
   return model
+
+def model_compile(model):
+  #compiling the model
+  opt = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, amsgrad=True)  # default params
+  model.compile(optimizer=opt,
+    loss='binary_crossentropy',
+    metrics=['accuracy'])
