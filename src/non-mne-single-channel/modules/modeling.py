@@ -10,12 +10,12 @@ import time
 def model_prepare():
   # try different values for shape parameter 1
   # shape = (time, channels, ur mom)
-  input_layer = keras.Input(shape = (351,8,1), name='main_input')
-  x     = layers.Conv2D(16, 8, padding='same', activation='relu')(input_layer)
+  input_layer = keras.Input(shape = (351,1,1), name='main_input')
+  x     = layers.Conv2D(16, 1, padding='same', activation='relu')(input_layer)
   x     = layers.Dropout(0.33)(x)
-  x     = layers.Conv2D(32, 6, padding='same', activation='relu')(x)
-  x     = layers.Conv2D(8, 4, padding='same', activation='relu')(x)
-  x     = layers.Conv2D(4, 2, padding='same', activation='relu')(x)
+  x     = layers.Conv2D(32, 1, padding='same', activation='relu')(x)
+  x     = layers.Conv2D(8, 1, padding='same', activation='relu')(x)
+  x     = layers.Conv2D(4, 1, padding='same', activation='relu')(x)
   x     = layers.GlobalAveragePooling2D()(x)
   x     = layers.Dense(8)(x)
   x     = layers.Dense(64)(x)
