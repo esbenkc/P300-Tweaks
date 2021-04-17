@@ -16,6 +16,7 @@ Reference Paper : https://www.frontiersin.org/articles/10.3389/fnhum.2013.00732/
 - 150 targets and 1050 non-targets. 
 - bandpass  filtering from  0.5  Hz  to  30  Hz  and  decimation  by  a  factor  of 12.
 - Trial  windows  were  set  to  0.1  s  pre-  and  0.7  s post-trigger,  yielding  15  samples  per  trial  and  channel. 
+- The doublebarred flashes come 75 units before the P300 signal...
 
 
 # Models to try
