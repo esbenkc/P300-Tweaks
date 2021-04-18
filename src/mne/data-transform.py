@@ -54,7 +54,14 @@ def data_transformation_raw(path):
         data = si.loadmat((path + 'S{0}.mat').format(subject))
         data, events = (data['y'], data['trig'])
         
-        print(data)
+        ev = []
+        for idx, e in enumerate(events):
+            if e == -1: 
+                ev.append(2)
+                print("WE HAD ONE!")
+            else: ev.append(e)
+
+        events = np.array(ev)    
         data = np.c_[data, events]
         
         data = np.transpose(data)
