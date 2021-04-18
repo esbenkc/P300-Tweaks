@@ -2,14 +2,16 @@
 import glob
 import time
 # import numpy as np
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+import numpy as np
 
 data_dir = './data/*.mat'
 files = glob.glob(data_dir)
 
+from modules import modeling, prefilter
 
 # for file in files:
-#     X_Filtered, flash = filter.prepare_data(file, cutoff = [0.5, 30], fs = 250.0)
+#     X_Filtered, flash = prefilter.prepare_data(file, cutoff = [0.5, 30], fs = 250.0)
 #     # Filtered signal
 #     array8D = np.array(X_Filtered)
 #     for i in range(0, 8):
@@ -19,22 +21,22 @@ files = glob.glob(data_dir)
 #     plt.show()
 #     exit()
 
-from modules import modeling, prefilter
 
 
-# model = modeling.model_prepare()
-# modeling.model_compile(model)
 
-# acc, val_acc, loss, val_loss = modeling.train_net(model, files)
+model = modeling.model_prepare()
+modeling.model_compile(model)
 
-# plt.rcParams["figure.figsize"] = (10,7)
-# plt.plot(acc)
-# plt.plot(val_acc)
-# plt.title('Model accuracy')
-# plt.ylabel('Accuracy')
-# plt.xlabel('Epoch')
-# plt.legend(['Train', 'Valid'], loc='upper left')
-# plt.show()
+acc, val_acc, loss, val_loss = modeling.train_net(model, files)
+
+plt.rcParams["figure.figsize"] = (10,7)
+plt.plot(acc)
+plt.plot(val_acc)
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Valid'], loc='upper left')
+plt.show()
 
 
 
@@ -106,7 +108,7 @@ from sklearn.metrics import confusion_matrix
 
 matrix = confusion_matrix(y_test.argmax(axis=1), preds.argmax(axis=1))
 
-import numpy as np
+
 matrix_norm = np.zeros((2,2))
 for i in range(2):
   matrix_norm[i] = matrix[i]/matrix[i].sum(axis=0)

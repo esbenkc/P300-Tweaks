@@ -26,7 +26,8 @@ def prepare_data(file, cutoff = 5, fs = 250.0, order = 6):
   
   useful_data = raw_data.copy()
   array8D = np.array(useful_data['y'])
-  X = array8D[:, 7]
+  X = array8D[:, 6:8]
+  # X = useful_data['y']
   flash = useful_data['trig']
   X_filtered = butter_bandpass_filter(X, cutoff, fs, order)
   
@@ -66,8 +67,8 @@ def clean_data(X, flash):
     finaly = np.concatenate((truey, proportionaly))
 
     X_timeseries = np.vstack(finalX)
-    X_letters = X_timeseries.reshape(15,20,351)
-    y_letters = finaly.reshape(15,20,2)
+    X_letters = X_timeseries.reshape(30,10,351,2)
+    y_letters = finaly.reshape(30,10,2)
     cleaned_X = np.vstack(X_letters)
     cleaned_Y = np.vstack(y_letters)
 

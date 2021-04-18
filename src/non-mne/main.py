@@ -22,24 +22,24 @@ files = glob.glob(data_dir)
 from modules import modeling, prefilter
 
 
-# model = modeling.model_prepare()
-# modeling.model_compile(model)
+model = modeling.model_prepare()
+modeling.model_compile(model)
 
-# acc, val_acc, loss, val_loss = modeling.train_net(model, files)
+acc, val_acc, loss, val_loss = modeling.train_net(model, files)
 
-# plt.rcParams["figure.figsize"] = (10,7)
-# plt.plot(acc)
-# plt.plot(val_acc)
-# plt.title('Model accuracy')
-# plt.ylabel('Accuracy')
-# plt.xlabel('Epoch')
-# plt.legend(['Train', 'Valid'], loc='upper left')
-# plt.show()
-
-
+plt.rcParams["figure.figsize"] = (10,7)
+plt.plot(acc)
+plt.plot(val_acc)
+plt.title('Model accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Valid'], loc='upper left')
+plt.show()
 
 
-# Intra participant
+
+
+# # Intra participant
 # for file in files:
 #   model = modeling.model_prepare()
 #   modeling.model_compile(model)
