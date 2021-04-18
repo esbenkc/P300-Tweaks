@@ -8,7 +8,7 @@ def clean_data(X, flash):
     # in kaggle: flash 0 ´= sample start, flash1 = duration, flash2 = stimulation, flash3 = hit/nohit
     flash_active = [(i, n[0]>0) for (i, n) in enumerate(flash) if n[0] != 0]
 
-    X_samples = np.array([np.array(X[i[0]:i[0]+351]) for i in flash_active] )
+    X_samples = np.array([np.transpose(np.array(X[i[0]:i[0]+351])) for i in flash_active] )
 
     # X_samples = np.array([np.array(X[i[0]:i[0]+351]) for i in flash] )
     #label     = [i[3] - 1 for i in flash]
@@ -30,7 +30,7 @@ def clean_data(X, flash):
     # falseX = X_selected[false_idx]
     # falsey = y[false_idx]
 
-    finalX  = X_samples
+    # finalX  = X_samples
     # truey  = y[true_idx]
     # proportional data to avoid greedy cost funtion
 
@@ -39,12 +39,12 @@ def clean_data(X, flash):
 
     # finaly = np.concatenate((truey, proportionaly))
 
-    X_timeseries = np.vstack(finalX)
-    X_letters = X_timeseries.reshape(len(flash_active),8,351)
+    # X_timeseries = np.vstack(finalX)
+    # X_letters = X_timeseries.reshape(len(flash_active),8,351)
     # y_letters = finaly.reshape(15,20,2)
     # cleaned_Y = np.vstack(y_letters)
 
-    return X_letters, events
+    return X_samples, events
 
 fs = 250
 
