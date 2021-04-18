@@ -1,4 +1,5 @@
 import mne
+from mne.io.kit.kit import _make_stim_channel
 import numpy as np
 import scipy.io as si
 from keras.utils import to_categorical
@@ -15,33 +16,35 @@ def clean_data(X, flash):
 
     # LIMIT = 4080 #the last trial is incomplete
     # X_selected = np.array(X_samples[:LIMIT])
-    X_selected = X_samples
-    # label_selected = np.array(label[:LIMIT])
-    label_selected = label
-    y = np.array(to_categorical(label_selected))
-    false_idx = [k for k, i in enumerate(y) if i[0] == 1]
-    true_idx  = [k for k, i in enumerate(y) if i[0] == 0]
+    # X_selected = X_samples
+    
+    events = []
+    for i, id in enumerate(flash):
+        if id != 0:
+            events.append(np.array([i,0,id]))
 
-    falseX = X_selected[false_idx]
-    falsey = y[false_idx]
+    events = np.array(events)
+    events = events.astype(int)
 
-    trueX  = X_selected[true_idx]  
-    truey  = y[true_idx]
+    # Get all the right IDs
+    # falseX = X_selected[false_idx]
+    # falsey = y[false_idx]
+
+    finalX  = X_samples
+    # truey  = y[true_idx]
     # proportional data to avoid greedy cost funtion
 
-    proportionalX = falseX[:int(len(trueX))]
-    proportionaly = falsey[:int(len(truey))]
+    # proportionalX = falseX[:int(len(trueX))]
+    # proportionaly = falsey[:int(len(truey))]
 
-    finalX = np.concatenate((trueX, proportionalX))
-    finaly = np.concatenate((truey, proportionaly))
+    # finaly = np.concatenate((truey, proportionaly))
 
     X_timeseries = np.vstack(finalX)
-    X_letters = X_timeseries.reshape(15,20,8,351)
-    y_letters = finaly.reshape(15,20,2)
-    cleaned_X = np.vstack(X_letters)
-    cleaned_Y = np.vstack(y_letters)
+    X_letters = X_timeseries.reshape(len(flash_active),8,351)
+    # y_letters = finaly.reshape(15,20,2)
+    # cleaned_Y = np.vstack(y_letters)
 
-    return cleaned_X, cleaned_Y
+    return X_letters, events
 
 fs = 250
 
@@ -54,12 +57,13 @@ info = mne.create_info(ch_names, ch_types=ch_types, sfreq=sampling_freq)
 
 
 for subject in range(1,6):
-
     # shape = (n_epochs, n_channels, n_steps)
-    data = si.loadmat('..\\data\\S{0}.mat'.format(subject))
+    data = si.loadmat('C:\\Users\\esben\\Desktop\\BCI\\hackthat-p300\\data\\S{0}.mat'.format(subject))
+    data, events = clean_data(data['y'], data['trig'])
 
-    data, y = clean_data(data['y'], data['trig'])
-    epochs = mne.EpochsArray(data, info)
+    # events shape = (n_events, 3)
+    events_dict = {'no-target': -1, 'target': 1}
+    epochs = mne.EpochsArray(data, info, events = events, event_id = events_dict)
 
-    epochs.save('..\\data\\S{0}.fif'.format(subject))
+    epochs.save('C:\\Users\\esben\\Desktop\\BCI\\hackthat-p300\\data\\S{0}.fif'.format(subject), overwrite=True)
 
