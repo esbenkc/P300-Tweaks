@@ -2,68 +2,72 @@ import mne
 from mne.io.kit.kit import _make_stim_channel
 import numpy as np
 import scipy.io as si
-from keras.utils import to_categorical
 
-def clean_data(X, flash):
-    # in kaggle: flash 0 ´= sample start, flash1 = duration, flash2 = stimulation, flash3 = hit/nohit
-    flash_active = [(i, n[0]>0) for (i, n) in enumerate(flash) if n[0] != 0]
-
-    X_samples = np.array([np.transpose(np.array(X[i[0]:i[0]+351])) for i in flash_active] )
-
-    # X_samples = np.array([np.array(X[i[0]:i[0]+351]) for i in flash] )
-    #label     = [i[3] - 1 for i in flash]
-    label     = [i[1] for i in flash_active]
-
-    # LIMIT = 4080 #the last trial is incomplete
-    # X_selected = np.array(X_samples[:LIMIT])
-    # X_selected = X_samples
+def clean_data(X, flash, output="raw"):
     
-    events = []
-    for i, id in enumerate(flash):
-        if id != 0:
-            events.append(np.array([i,0,id]))
+    if output == "epochs":
+        flash_active = [(i, n[0]>0) for (i, n) in enumerate(flash) if n[0] != 0]
 
-    events = np.array(events)
-    events = events.astype(int)
+        X_samples = np.array([np.transpose(np.array(X[i[0]:i[0]+351])) for i in flash_active] )
 
-    # Get all the right IDs
-    # falseX = X_selected[false_idx]
-    # falsey = y[false_idx]
+        events = []
+        for i, id in enumerate(flash):
+            if id != 0:
+                events.append(np.array([i,0,id]))
 
-    # finalX  = X_samples
-    # truey  = y[true_idx]
-    # proportional data to avoid greedy cost funtion
+        events = np.array(events)
+        events = events.astype(int)
 
-    # proportionalX = falseX[:int(len(trueX))]
-    # proportionaly = falsey[:int(len(truey))]
-
-    # finaly = np.concatenate((truey, proportionaly))
-
-    # X_timeseries = np.vstack(finalX)
-    # X_letters = X_timeseries.reshape(len(flash_active),8,351)
-    # y_letters = finaly.reshape(15,20,2)
-    # cleaned_Y = np.vstack(y_letters)
-
-    return X_samples, events
-
-fs = 250
-
-n_channels = 8
-sampling_freq = 250
-ch_names = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
-ch_types = ['eeg'] * 8
-
-info = mne.create_info(ch_names, ch_types=ch_types, sfreq=sampling_freq)
+        return X_samples, events
 
 
-for subject in range(1,6):
-    # shape = (n_epochs, n_channels, n_steps)
-    data = si.loadmat('C:\\Users\\esben\\Desktop\\BCI\\hackthat-p300\\data\\S{0}.mat'.format(subject))
-    data, events = clean_data(data['y'], data['trig'])
+def data_transformation_epochs(path):
+    sampling_freq = 250
+    ch_names = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
+    ch_types = ['eeg'] * 8
 
-    # events shape = (n_events, 3)
-    events_dict = {'no-target': -1, 'target': 1}
-    epochs = mne.EpochsArray(data, info, events = events, event_id = events_dict)
+    info = mne.create_info(ch_names, ch_types=ch_types, sfreq=sampling_freq)
 
-    epochs.save('C:\\Users\\esben\\Desktop\\BCI\\hackthat-p300\\data\\S{0}.fif'.format(subject), overwrite=True)
+
+    for subject in range(1,6):
+        # shape = (n_epochs, n_channels, n_steps)
+        data = si.loadmat((path + 'S{0}.mat').format(subject))
+        data, events = clean_data(data['y'], data['trig'], output="epochs")
+
+        # events shape = (n_events, 3)
+        events_dict = {'no-target': -1, 'target': 1}
+        epochs = mne.EpochsArray(data, info, events = events, event_id = events_dict)
+
+        epochs.save((path + 'S{0}.fif').format(subject), overwrite=True)
+
+    return("success")
+
+def data_transformation_raw(path):
+    sampling_freq = 250
+    ch_names = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8','MNI_STIM_CHANNEL']
+    ch_types = ['eeg'] * 8 + ['stim']
+
+    info = mne.create_info(ch_names, ch_types=ch_types, sfreq=sampling_freq)
+    
+    for subject in range(1,6):
+        # shape = (n_channels, n_steps)
+        data = si.loadmat((path + 'S{0}.mat').format(subject))
+        data, events = (data['y'], data['trig'])
+        
+        print(data)
+        data = np.c_[data, events]
+        
+        data = np.transpose(data)
+
+        raw = mne.io.RawArray(data, info)
+        montage = mne.channels.make_standard_montage(kind="standard_1020")
+        raw.set_montage(montage)
+        
+        raw.save((path + 'R_S{0}.fif').format(subject), overwrite=True)
+
+    return("success")
+
+data_transformation_raw("C:\\Users\\esben\\Desktop\\BCI\\hackthat-p300\\data\\")
+# data_transformation("C:\\Users\\esben\\Desktop\\BCI\\hackthat-p300\\data\\")
+
 
