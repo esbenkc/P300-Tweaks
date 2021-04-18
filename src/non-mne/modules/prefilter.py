@@ -64,8 +64,8 @@ def clean_data(X, flash):
     finaly = np.concatenate((truey, proportionaly))
 
     X_timeseries = np.vstack(finalX)
-    X_letters = X_timeseries.reshape(2,150,351,8)
-    y_letters = finaly.reshape(2,150,2)
+    X_letters = X_timeseries.reshape(15,20,351,8)
+    y_letters = finaly.reshape(15,20,2)
     cleaned_X = np.vstack(X_letters)
     cleaned_Y = np.vstack(y_letters)
 
