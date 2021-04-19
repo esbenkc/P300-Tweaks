@@ -44,7 +44,7 @@ def data_transformation_epochs(path):
 
 def data_transformation_raw(path):
     sampling_freq = 250
-    ch_names = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8','MNI_STIM_CHANNEL']
+    ch_names = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8','MNE_STIM_CHANNEL']
     ch_types = ['eeg'] * 8 + ['stim']
 
     info = mne.create_info(ch_names, ch_types=ch_types, sfreq=sampling_freq)
@@ -58,7 +58,6 @@ def data_transformation_raw(path):
         for idx, e in enumerate(events):
             if e == -1: 
                 ev.append(2)
-                print("WE HAD ONE!")
             else: ev.append(e)
 
         events = np.array(ev)    
