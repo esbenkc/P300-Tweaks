@@ -10,15 +10,20 @@ import time
 def model_prepare():
   # try different values for shape parameter 1
   # shape = (time, channels, ur mom)
-  input_layer = keras.Input(shape = (120,8,1), name='main_input')
-  x     = layers.Conv2D(32, 8, padding='same', activation='relu')(input_layer)
+  input_layer = keras.Input(shape = (300,7,1), name='main_input')
+  x     = layers.LayerNormalization(axis=-2)(input_layer)
+  x     = layers.Conv2D(35, 7, padding='same', activation='relu')(x)
   x     = layers.Dropout(0.33)(x)
-  x     = layers.Conv2D(16, 8, padding='same', activation='relu')(x)
-  x     = layers.Conv2D(16, 4, padding='same', activation='relu')(x)
-  x     = layers.Conv2D(8, 4, padding='same', activation='relu')(x)
+  #x     = layers.Conv2D(21, 7, padding='same', activation='relu')(x)
+  #x     = layers.Conv2D(21, 7, padding='same', activation='relu')(x)
+  x     = layers.Conv2D(20, 5, padding='same', activation='relu')(x)
+  x     = layers.Conv2D(15, 3, padding='same', activation='relu')(x)
+  #x     = layers.Conv2D(7, 3, padding='same', activation='relu')(x)
+  x     = layers.Conv2D(4, 3, padding='same', activation='relu')(x)
+  x     = layers.Conv2D(4, 2, padding='same', activation='relu')(x)
   x     = layers.GlobalAveragePooling2D()(x)
-  x     = layers.Dense(32)(x)
-  x     = layers.Dense(2)(x)
+  x     = layers.Dense(22)(x)
+  x     = layers.Dense(4)(x)
   output = layers.Dense(2, activation='softmax')(x)
 
   model = keras.Model(inputs=input_layer, outputs=output)
@@ -45,7 +50,7 @@ def train_net(model, files):
   X = [subject for subject in appX]
   y = [subject for subject in appy]
   X_train, X_valid, y_train, y_valid = train_test_split(np.vstack(X), np.vstack(y), test_size=0.1)
-  history = model.fit(X_train, y_train, validation_data=(X_valid, y_valid), batch_size=20, epochs=150, verbose=1)
+  history = model.fit(X_train, y_train, validation_data=(X_valid, y_valid), batch_size=30, epochs=1000, verbose=1)
   end = time.time()
   print("time elapsed training is:", (end - init)/60, " minutes")  
   return history.history['accuracy'], history.history['val_accuracy'], history.history['loss'], history.history['val_loss']

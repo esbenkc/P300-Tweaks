@@ -2,28 +2,34 @@
 import glob
 import time
 # import numpy as np
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+from tensorflow import keras 
+import numpy as np
+from modules import modeling, prefilter
 
 data_dir = './data/*.mat'
 files = glob.glob(data_dir)
 
 
+
+
 # for file in files:
-#     X_Filtered, flash = filter.prepare_data(file, cutoff = [0.5, 30], fs = 250.0)
+#     X_Filtered, flash = prefilter.prepare_data(file, cutoff = [0.5, 30], fs = 250.0)
 #     # Filtered signal
 #     array8D = np.array(X_Filtered)
-#     for i in range(0, 8):
+#     for i in range(0, 7):
 #       plt.plot(array8D[:, i], label = 'Channel: ' + str(i))
 #     plt.plot(flash, label='Trigger')
 #     plt.legend()
 #     plt.show()
 #     exit()
 
-from modules import modeling, prefilter
 
 
 model = modeling.model_prepare()
 modeling.model_compile(model)
+
+keras.utils.plot_model(model, '2DConv_model.png', show_shapes=True)
 
 acc, val_acc, loss, val_loss = modeling.train_net(model, files)
 
@@ -106,7 +112,7 @@ from sklearn.metrics import confusion_matrix
 
 matrix = confusion_matrix(y_test.argmax(axis=1), preds.argmax(axis=1))
 
-import numpy as np
+
 matrix_norm = np.zeros((2,2))
 for i in range(2):
   matrix_norm[i] = matrix[i]/matrix[i].sum(axis=0)
