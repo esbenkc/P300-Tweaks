@@ -1,4 +1,4 @@
-# P300 pipeline optimization
+# 🧠 Hackathon P300 pipeline optimization
 
 This repository is for the HACK-THAT group for the br41n.io hackathon held by g.tec medical engineering the 17th to 18th of April, 2021. It was the team's first foray into time series EEG analyses in Python using machine learning..
 It contains **the p300 data** for the project and **code** used in the project. Additionally, it contains the texts for the project along with the figures used for the presentation.
